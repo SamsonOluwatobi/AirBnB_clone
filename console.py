@@ -8,7 +8,7 @@ class HBNBCommand(cmd.Cmd):
     prompt = '(hbnb) '
 
     def do_quit(self, arg):
-        "Exiting the console"
+        "Quit command to exit the program"
         return True
 
     def do_EOF(self, arg):
@@ -19,9 +19,7 @@ class HBNBCommand(cmd.Cmd):
         "getting information on each keyword"
         cmd.Cmd.do_help(self, arg)
 
-    def emptyline(self):
-        "Do nothing on empty line"
-        pass
+
 
 
 if __name__ == "__main__":
