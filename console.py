@@ -12,7 +12,7 @@ import json
 import os
 from cmd import Cmd
 from models.base_model import BaseModel
-from models.file_storage import FileStorage
+from models import FileStorage
 
 storage = FileStorage()
 storage.reload()
