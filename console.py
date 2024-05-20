@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-import cmd
-
-
-
 """
 Module to define the HBNB console class.
 
@@ -11,6 +7,8 @@ cmd.Cmd class. This class is used to define the commands available in
 the HBNB console.
 
 """
+import cmd
+
 
 class HBNBCommand(cmd.Cmd):
     """
