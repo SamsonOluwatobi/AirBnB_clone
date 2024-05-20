@@ -2,48 +2,42 @@
 import cmd
 
 
+
+"""
+Module to define the HBNB console class.
+
+This module defines a class, HBNBCommand, which inherits from the
+cmd.Cmd class. This class is used to define the commands available in
+the HBNB console.
+
+"""
+
 class HBNBCommand(cmd.Cmd):
     """
     A class that inherits from the cmd.Cmd class. This class is used to define
     the commands available in the HBNB console.
+
+    Attributes:
+        prompt (str): The prompt string used in the console.
+
+    Methods:
+        do_quit -- Command to exit the program
+        do_EOF -- Exiting using EOF
+        emptyline -- Do nothing on empty line
     """
+
     prompt = '(hbnb) '
 
     def do_quit(self, arg):
-        """
-        Quit command to exit the program.
-
-        Args:
-            arg (str): Unused argument
-
-        Returns:
-            bool: True to exit the program
+        """Quit command to exit the program
         """
         return True
 
     def do_EOF(self, arg):
         """
         Exiting using EOF.
-
-        Args:
-            arg (str): Unused argument
-
-        Returns:
-            bool: True to exit the program
         """
         return True
-
-    def do_help(self, arg):
-        """
-        Getting information on each keyword.
-
-        Args:
-            arg (str): The keyword to get information on
-
-        Returns:
-            None
-        """
-        cmd.Cmd.do_help(self, arg)
 
     def emptyline(self):
         "Do nothing on empty line"
