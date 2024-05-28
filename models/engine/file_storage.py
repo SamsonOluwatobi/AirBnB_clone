@@ -1,100 +1,84 @@
-#!/usr/bin/env python3
-import json
+#!/usr/bin/python3
+"""
+The file storage module
+"""
+from datetime import datetime
 import os
 from models.base_model import BaseModel
+from models.user import User
+import json
+from models.place import Place
+from models.city import City
+from models.review import Review
+from models.state import State
+from models.amenity import Amenity
 
-"""
-Class for storing and retrieving instances of BaseModel to/from a JSON file.
-"""
 
-
-class FileStorage:
+class FileStorage():
     """
-    Class for storing and retrieving instances of BaseModel
-    to/from a JSON file.
-
-    Attributes:
-        __file_path (str): Path to the JSON file.
-        __objects (dict): Dictionary of stored objects.
-
-    Methods:
-        all -- Return the dictionary of stored objects.
-        new -- Add a new object to the storage.
-        save -- Serialize the stored objects to the JSON file.
-        reload -- Deserialize the JSON file and update the stored objects.
-        __file_exists -- Check if the JSON file exists.
+    That class will orginize all information of every object
     """
-
     __file_path = "file.json"
     __objects = {}
 
     def all(self):
-        """
-        Return the dictionary of stored objects.
-
-        Returns:
-            dict: Dictionary of stored objects.
-        """
-        # If the file exists, deserialize it and return the
-        # __objects dictionary
-        if self.__file_exists():
-            self.reload()
-            return self.__objects
-        # If the file does not exist, return an empty dictionary
-        elif not self.__file_exists():
-            return {}
-        # Return the __objects dictionary
-        return self.__objects
+        """ return the objects dictionary """
+        return FileStorage.__objects
 
     def new(self, obj):
-        """
-        Add a new object to the storage.
-
-        Args:
-            obj: Instance of BaseModel or subclass.
-        """
-        # Use the class name and ID as the key
-        okey = obj.__class__.__name__
-        self.__objects["{}.{}".format(okey, obj.id)] = obj
+        """ sets in __objects the obj with key <obj class name>.id """
+        element = "{}.{}".format(obj.__class__.__name__, obj.id)
+        FileStorage.__objects.update({element: obj})
 
     def save(self):
         """
-        Serialize the stored objects to the JSON file.
-
-        Note:
-            This method uses JSON to serialize the dictionary of
-            stored objects. The resulting JSON file is written to
-            the FileStorage.__file_path attribute.
+        serializes __objects to the JSON file (path: __file_path)
+        i created new_objects dictionary in different location becuase
+        when we iterate over __objects dictionary we will an error which
+        is value has no to_dict method because that
+        value will be dictionary no object
+        that thing will happen when
+        we create an object for first time but it happen
+        when we create an object for the second time
         """
-        keydict = {}
-        for key, obj in self.__objects.items():
-            if isinstance(obj, BaseModel):
-                keydict[key] = obj.to_dict()
-        with open(self.__file_path, "w") as f:
-            json.dump(keydict, f)
+        new_objects = FileStorage.__objects.copy()
+
+        for key, value in FileStorage.__objects.items():
+            new_objects[key] = value.to_dict()
+        with open(FileStorage.__file_path, "w", encoding="utf-8") as f:
+            json.dump(new_objects, f)
 
     def reload(self):
-        """
-        Deserialize the JSON file and update the stored objects.
+        """Deserialize the JSON file"""
+        """ deserializes the JSON file to __objects """
+        if os.path.isfile(FileStorage.__file_path) is False:
+            return
+        else:
+            obj = {}
+            with open(FileStorage.__file_path, "r", encoding="utf-8") as file:
+                obj = json.load(file)
 
-        Note:
-            This method reads the JSON file stored at the
-            FileStorage.__file_path attribute, deserializes the contents,
-            and updates the FileStorage.__objects attribute.
-        """
-        if self.__file_exists():
-            with open(self.__file_path, "r") as f:
-                keydict = json.load(f)
-                for key, obj_data in keydict.items():
-                    cls_name = obj_data["__class__"]
-                    if cls_name == "BaseModel":
-                        self.new(BaseModel.from_dict(**obj_data))
+                for key, value in obj.items():
+                    name_class = value["__class__"]
+                    if name_class == "User":
+                        model = User(**value)
 
-    def __file_exists(self):
-        """
-        Check if the JSON file exists.
+                    elif name_class == "Place":
+                        model = Place(**value)
 
-        Returns:
-            bool: True if the file exists, False otherwise.
-        """
-        return os.path.exists(self.__file_path)
+                    elif name_class == "State":
+                        model = State(**value)
+
+                    elif name_class == "City":
+                        model = City(**value)
+
+                    elif name_class == "Amenity":
+                        model = Amenity(**value)
+
+                    elif name_class == "Review":
+                        model = Review(**value)
+
+                    else:
+                        model = BaseModel(**value)
+
+                    FileStorage.__objects[key] = model
